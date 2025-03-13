@@ -24,5 +24,9 @@ namespace ProcesowanieZamowienia_PG
             Console.WriteLine("Przetwarzanie zamówienia, opłata gotówką za pobraniem");
             return OrderStates.NEW;
         }
+        public override string ToString()
+        {
+            return "Gotówka za pobraniem";
+        }
     }
 }

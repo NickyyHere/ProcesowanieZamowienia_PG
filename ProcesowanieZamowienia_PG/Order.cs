@@ -37,7 +37,7 @@ namespace ProcesowanieZamowienia_PG
                 Console.WriteLine("{0, -20} {1, -15} {2, -15} zł", produkt.Key.ProductName, produkt.Value, produkt.Key.ProductPrice);
             }
             Console.WriteLine($"Adres zamówienia: {OrderAddress}\n" +
-                $"Sposób płatności: {utils.PaymentMethodToString(PaymentMethod)}\n" +
+                $"Sposób płatności: {PaymentMethod}\n" +
                 $"Typ klienta: {utils.ClientToString(ClientType)}");
         }
         public float GetOrderValue()

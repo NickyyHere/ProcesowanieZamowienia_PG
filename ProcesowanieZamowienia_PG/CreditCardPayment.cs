@@ -20,5 +20,9 @@ namespace ProcesowanieZamowienia_PG
             Console.WriteLine("Przetwarzanie zamówienia Kartą Kredytową");
             return OrderStates.NEW;
         }
+        public override string ToString()
+        {
+            return "Karta kredytowa";
+        }
     }
 }

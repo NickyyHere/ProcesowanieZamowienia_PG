@@ -32,13 +32,6 @@ namespace ProcesowanieZamowienia_PG
             };
         }
 
-        public string PaymentMethodToString(IPayment payment)
-        {
-            if (payment is CashPayment) { return "Gotówka - za pobraniem"; }
-            else if (payment is CreditCardPayment) { return "Karta kredytowa"; }
-            else { throw new Exception("Nieznany sposób płatności"); }
-        }
-
         public string ClientToString(Clients client)
         {
             return client switch
