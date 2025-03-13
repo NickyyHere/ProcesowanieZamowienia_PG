@@ -1,6 +1,6 @@
 ﻿namespace ProcesowanieZamowienia_PG
 {
-    internal enum StanyZamowien
+    internal enum OrderStates
     {
         NEW,
         STORAGE,

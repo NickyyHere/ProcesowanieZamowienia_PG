@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProcesowanieZamowienia_PG
 {
-    internal enum Klienci
+    internal enum Clients
     {
         COMPANY,
         NATURAL_PERSON

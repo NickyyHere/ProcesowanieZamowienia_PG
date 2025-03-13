@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProcesowanieZamowienia_PG
 {
-    internal interface IPlatnosci
+    internal interface IPayment
     {
-        public void Przetworz();
+        public OrderStates Process(Order order);
     }
 }
