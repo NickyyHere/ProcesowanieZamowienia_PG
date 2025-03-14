@@ -10,15 +10,7 @@ namespace ProcesowanieZamowienia_PG
     {
         public OrderStates Process(Order order)
         {
-            Address address = order.OrderAddress;
-
-            if (!address.IsNull())
-            {
-                return OrderStates.ERROR;
-            }
-
-            Console.WriteLine("Przetwarzanie zamówienia Kartą Kredytową");
-            return OrderStates.NEW;
+            return OrderStates.STORAGE;
         }
         public override string ToString()
         {

@@ -8,55 +8,85 @@ namespace ProcesowanieZamowienia_PG
 {
     internal class Order
     {
+        private static int _orderId = 0;
+        private OrderStates _state;
         public int OrderId { get; private set; }
-        public OrderStates OrderState { get; private set; }
+        public OrderStates OrderState {
+            get { return _state; }
+            private set 
+            {
+                if (_state == value) return;
+
+                if (OrderAddress.IsNull())
+                    _state = OrderStates.ERROR;
+                else
+                    _state = value;
+                switch (_state)
+                {
+                    case OrderStates.NEW:
+                        Console.WriteLine("Utworzono nowe zamówienie");
+                        break;
+                    case OrderStates.STORAGE:
+                        Console.WriteLine("Zamówienie przekazane do magazynu");
+                        break;
+                    case OrderStates.SENT:
+                        Console.WriteLine("Zamówienie wysłane do klienta");
+                        break;
+                    case OrderStates.RETURNED:
+                        Console.WriteLine("Zamówienie zostało zwrócone do klienta");
+                        break;
+                    case OrderStates.ERROR:
+                        Console.WriteLine("Błąd w zamówieniu! Proszę edytować zamówienie.");
+                        break;
+                    case OrderStates.CLOSED:
+                        Console.WriteLine("Zamówienie zostało zamknięte");
+                        break;
+                }
+            } 
+        }
         public Dictionary<Product, int> Products = new Dictionary<Product, int>();
         public Clients ClientType {  get; private set; }
         public Address OrderAddress { get; private set; }
         public IPayment PaymentMethod { get; private set; }
 
-        public Order(int orderId, OrderStates orderState, Dictionary<Product, int> products, Clients clientType, Address orderAddress, IPayment paymentMethod)
+        public Order(Clients clientType, Address orderAddress, IPayment paymentMethod)
         {
-            OrderId = orderId;
-            OrderState = orderState;
-            Products = products;
+            OrderAddress = orderAddress;
+            OrderId = _orderId++;
+            OrderState = OrderStates.NEW;
+            ClientType = clientType;
+            PaymentMethod = paymentMethod;
+        }
+        public void EditOrder(Clients clientType, Address orderAddress, IPayment paymentMethod)
+        {
             ClientType = clientType;
             OrderAddress = orderAddress;
             PaymentMethod = paymentMethod;
+            OrderState = OrderStates.NEW;
         }
-
-        public void ShowOrder()
+        public void AddProduct(Product product, int amount)
         {
-            Utils utils = Utils.Instance;
-            Console.WriteLine($"Identyfikator zamówienia: {OrderId}\n" +
-                $"Stan zamówienia: {utils.StateToString(OrderState)}\n" +
-                $"Produkty w zamówieniu:\n");
-            Console.WriteLine("{0, -20} {1, -15} {2, -15}", "Nazwa", "Ilość sztuk", "Cena za sztukę");
-            foreach (var produkt in Products)
-            {
-                Console.WriteLine("{0, -20} {1, -15} {2, -15} zł", produkt.Key.ProductName, produkt.Value, produkt.Key.ProductPrice);
-            }
-            Console.WriteLine($"Adres zamówienia: {OrderAddress}\n" +
-                $"Sposób płatności: {PaymentMethod}\n" +
-                $"Typ klienta: {utils.ClientToString(ClientType)}");
+            Products.Add(product, amount);
         }
-        public float GetOrderValue()
+        public void RemoveProduct(Product product)
         {
-            float suma = 0f;
-            foreach (var product in Products)
-            {
-                suma += product.Key.ProductPrice * product.Value;
-            }
-            return suma;
+            Products.Remove(product);
         }
-
-        public void ZlozZamowienie()
+        public void ProcessOrder()
         {
             OrderState = PaymentMethod.Process(this);
         }
-        public void ZmienStanZamowienia(OrderStates state)
+        public void CloseOrder()
         {
-            this.OrderState = state;
+            OrderState = OrderStates.CLOSED;
+        }
+        public void SendOrder()
+        {
+            OrderState = OrderStates.SENT;
+        }
+        public override string ToString()
+        {
+            return $"Zamówienie nr. {OrderId}, Status zamówienia: {Utils.Instance.StateToString(OrderState)}";
         }
     }
 }

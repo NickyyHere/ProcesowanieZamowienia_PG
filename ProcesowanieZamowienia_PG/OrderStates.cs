@@ -2,11 +2,11 @@
 {
     internal enum OrderStates
     {
+        ERROR,
         NEW,
         STORAGE,
         SENT,
         RETURNED,
-        ERROR,
         CLOSED
     }
 }

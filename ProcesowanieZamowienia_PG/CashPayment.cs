@@ -10,19 +10,11 @@ namespace ProcesowanieZamowienia_PG
     {
         public OrderStates Process(Order order)
         {
-            Address address = order.OrderAddress;
-
-            if (!address.IsNull())
-            {
-                return OrderStates.ERROR;
-            }
-            if (order.GetOrderValue() >= 2500)
+            if (OrderController.Instance.GetOrderValue(order) >= 2500)
             {
                 return OrderStates.RETURNED;
             }
-
-            Console.WriteLine("Przetwarzanie zamówienia, opłata gotówką za pobraniem");
-            return OrderStates.NEW;
+            return OrderStates.STORAGE;
         }
         public override string ToString()
         {

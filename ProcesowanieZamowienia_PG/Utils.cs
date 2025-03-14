@@ -28,7 +28,7 @@ namespace ProcesowanieZamowienia_PG
                 OrderStates.RETURNED => "Zwrócone",
                 OrderStates.SENT => "Wysłane",
                 OrderStates.CLOSED => "Zamknięte",
-                _ => throw new Exception("Nieznany stan zamówienia")
+                _ => "Błąd"
             };
         }
 
@@ -40,6 +40,17 @@ namespace ProcesowanieZamowienia_PG
                 Clients.NATURAL_PERSON => "Osoba prywatna",
                 _ => throw new Exception("Nieznany typ klienta")
             };
+        }
+
+        public int IntegerInput(string message)
+        {
+            int choice;
+            Console.Write(message);
+            while (!int.TryParse(Console.ReadLine(), out choice))
+            {
+                Console.Write($"Podana wartość powinna być liczbą całkowitą\n> ");
+            }
+            return choice;
         }
     }
 }
