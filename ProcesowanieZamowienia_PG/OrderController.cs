@@ -1,39 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProcesowanieZamowienia_PG
+﻿namespace ProcesowanieZamowienia_PG
 {
     internal class OrderController
     {
-        private static OrderController? _instance;
-        private OrderController() { }
-        public static OrderController Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new OrderController();
-                return _instance;
-            }
+        public List<Order> Orders { get; private set; }
+
+        public OrderController(List<Order> orders) {
+            Orders = orders;
         }
 
-        public void ShowAllOrders(List<Order> orders, OrderStates? filter = null)
+        public void ShowAllOrders(OrderStates? filter = null)
         {
-            foreach (var order in orders)
+            foreach (var order in Orders)
             {
                 if (filter == null)
                 {
                     Console.WriteLine(order);
                 }
-                else
+                else if(order.OrderState == filter)
                 {
-                    if (order.OrderState == filter)
-                    {
-                        Console.WriteLine(order);
-                    }
+                    Console.WriteLine(order);
                 }
             }
         }
@@ -49,28 +34,22 @@ namespace ProcesowanieZamowienia_PG
             {
                 Console.WriteLine("{0, -20} {1, -15} {2, -15} zł", produkt.Key.ProductName, produkt.Value, produkt.Key.ProductPrice);
             }
-            Console.WriteLine($"Całkowita wartość zamówienia: {OrderController.Instance.GetOrderValue(order)}\n" +
+            Console.WriteLine($"Całkowita wartość zamówienia: {order.GetOrderValue()}\n" +
                 $"Adres zamówienia: {order.OrderAddress}\n" +
                 $"Sposób płatności: {order.PaymentMethod}\n" +
                 $"Typ klienta: {utils.ClientToString(order.ClientType)}");
         }
-        public Order UpsertOrder(Order? order = null) // UpSert - Update or Insert
+        public void UpsertOrder(Order? order = null) // UpSert - Update or Insert
         {
             Clients clientType;
             Address address;
             IPayment paymentMethod;
-
-            switch (Utils.Instance.IntegerInput("Wybierz typ klienta:\n1 - Firma\n2 - Osoba prywatna\nWprowadzenie innej liczby spowoduje anulowanie tworzenia zamówienia\n> ")) 
+            foreach (Clients client in Enum.GetValues(typeof(Clients)))
             {
-                case 1:
-                    clientType = Clients.COMPANY;
-                    break;
-                case 2:
-                    clientType = Clients.NATURAL_PERSON;
-                    break;
-                default:
-                    return null; // Oznacza anulowanie tworzenia zamówienia
+                Console.WriteLine($"{(int)client} - {Utils.Instance.ClientToString(client)}");
             }
+            clientType = (Clients)Utils.Instance.IntegerInput("Wybierz typ klienta (Wprowadzenie innej liczby spowoduje anulowanie tworzenia zamówienia):\n> ");
+
 
             Console.WriteLine("Podaj adres zamówienia:");
             Console.Write("Kraj: ");
@@ -92,41 +71,34 @@ namespace ProcesowanieZamowienia_PG
                     paymentMethod = new CashPayment();
                     break;
                 default:
-                    return null;
+                    return;
             }
             if(order == null)
             {
-                return new Order(clientType, address, paymentMethod);
+                Orders.Add(new Order(clientType, address, paymentMethod));
             }
-            order.EditOrder(clientType, address, paymentMethod);
-            Console.WriteLine("Zamówienie zostało zedytowane");
-            return order;
-        }
-        public float GetOrderValue(Order order)
-        {
-            float suma = 0f;
-            foreach (var product in order.Products)
+            else
             {
-                suma += product.Key.ProductPrice * product.Value;
+                order.EditOrder(clientType, address, paymentMethod);
+                Console.WriteLine("Zamówienie zostało zedytowane");
             }
-            return suma;
         }
-        public Order SelectOrder(List<Order> orders, OrderStates? filter = null)
+        public Order SelectOrder(OrderStates? filter = null)
         {
-            ShowAllOrders(orders, filter);
+            ShowAllOrders(filter);
             int orderId = Utils.Instance.IntegerInput("Wprowadź numer zamówienia: ");
-            if(orderId < 0 || orderId > orders.Count - 1)
+            if(orderId < 0 || orderId > Orders.Count - 1)
             {
                 Console.WriteLine("Nie ma zamówienia o podanym numerze");
                 return null;
             }
-            return orders[orderId];
+            return Orders[orderId];
         }
         
-        public void AddProductToOrder(Order order, List<Product> products)
+        public void AddProductToOrder(Order order, ProductController productController)
         {
             Console.WriteLine("Wybierz produkt do dodania do zamówienia:");
-            Product product = ProductController.Instance.SelectProduct(products);
+            Product product = productController.SelectProduct();
             int amount = Utils.Instance.IntegerInput("Podaj ilość sztuk: ");
             if (amount < 1)
             {
@@ -145,25 +117,29 @@ namespace ProcesowanieZamowienia_PG
                 return;
             }
             Console.WriteLine("Wybierz produkt do usunięcia z zamówienia:");
-            int i = 1;
+            int i = 0;
             foreach (var product in order.Products)
             {
                 Console.WriteLine($"{i}. {product.Key.ProductName} - {product.Value} sztuk");
                 i++;
             }
             int productId = Utils.Instance.IntegerInput("Wprowadź numer produktu do usunięcia z zamówienia: ");
-            if (productId < 1 || productId > order.Products.Count)
+            if (productId < 0 || productId > order.Products.Count)
             {
                 Console.WriteLine("Nie ma produktu o podanym numerze");
                 return;
             }
-            order.Products.Remove(order.Products.ElementAt(productId - 1).Key);
+            order.Products.Remove(order.Products.ElementAt(productId).Key);
             Console.WriteLine("Produkt został usunięty z zamówienia");
         }
 
         public void ProcessOrder(Order order)
         {
-            if(order.Products.Count == 0)
+            if (order == null) {
+                Console.WriteLine("Nie wybrano zamówienia do przetworzenia");
+                return;
+            };
+            if (order.Products.Count == 0)
             {
                 Console.WriteLine("Nie można przetworzyć zamówienia bez produktów");
                 return;
@@ -183,7 +159,6 @@ namespace ProcesowanieZamowienia_PG
                 
             }
             order.ProcessOrder();
-            Console.WriteLine($"Zamówienie nr. {order.OrderId} zostało przetworzone");
         }
 
         public void CloseOrder(Order order)
@@ -194,7 +169,6 @@ namespace ProcesowanieZamowienia_PG
                 return;
             }
             order.CloseOrder();
-            Console.WriteLine($"Zamówienie nr. {order.OrderId} zostało zamknięte");
         }
 
         public void SendOrder(Order order)
@@ -205,7 +179,6 @@ namespace ProcesowanieZamowienia_PG
                 return;
             }
             order.SendOrder();
-            Console.WriteLine($"Zamówienie nr. {order.OrderId} zostało wysłane");
         }
     }
 }

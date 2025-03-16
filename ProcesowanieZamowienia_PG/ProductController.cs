@@ -1,42 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProcesowanieZamowienia_PG
+﻿namespace ProcesowanieZamowienia_PG
 {
     internal class ProductController
     {
-        private static ProductController? instance;
-
-        private ProductController() { }
-        public static ProductController Instance
+        public List<Product> Products { get; private set; }
+        public ProductController(List<Product> products)
         {
-            get
-            {
-                if (instance == null) instance = new ProductController();
-                return instance;
-            }
+            Products = products;
         }
-        public void ShowProducts(List<Product> products)
+        public void ShowProducts()
         {
-            foreach (Product product in products)
+            foreach (Product product in Products)
             {
                 Console.WriteLine(product);
             }
         }
 
-        public Product SelectProduct(List<Product> products)
+        public Product SelectProduct()
         {
-            ShowProducts(products);
+            ShowProducts();
             int productId = Utils.Instance.IntegerInput("Wprowadź numer produktu: ");
-            if (productId < 0 || productId > products.Count - 1)
+            if (productId < 0 || productId > Products.Count - 1)
             {
                 Console.WriteLine("Nie ma produktu o podanym numerze");
                 return null;
             }
-            return products[productId];
+            return Products[productId];
         }
     }
 }

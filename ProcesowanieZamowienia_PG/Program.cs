@@ -1,12 +1,11 @@
-﻿using System;
-
-namespace ProcesowanieZamowienia_PG
+﻿namespace ProcesowanieZamowienia_PG
 {
     class Program
     {
         static List<Order> OrderList = new List<Order>();
         static List<Product> ProductList = new List<Product>();
-        static OrderController OrderController = OrderController.Instance;
+        static OrderController OrderController = new OrderController(OrderList);
+        static ProductController ProductController = new ProductController(ProductList);
 
         static void Main(string[] args)
         {
@@ -48,10 +47,10 @@ namespace ProcesowanieZamowienia_PG
             switch (input)
             {
                 case 1:
-                    OrderList.Add(OrderController.UpsertOrder());
+                    OrderController.UpsertOrder();
                     break;
                 case 2:
-                    o = OrderController.SelectOrder(OrderList);
+                    o = OrderController.SelectOrder();
                     if (o != null)
                     {
                         OrderController.UpsertOrder(o);
@@ -61,46 +60,45 @@ namespace ProcesowanieZamowienia_PG
                     int choice = Utils.Instance.IntegerInput("Czy filtrować zamówienia po ich stanie?\n1 - TAK\n2 - NIE\n> ");
                     if (choice == 1)
                     {
-                        OrderStates state = (OrderStates)Utils.Instance.IntegerInput("Wybierz stan zamówienia:\n0 - Błędne\n1 - Nowe\n2 - W magazynie\n3 - Zwrócone\n4 - Wysłane\n5 - Zamknięte\n> ");
-                        if(choice < 0 || choice > 5)
+                        foreach (OrderStates state in Enum.GetValues(typeof(OrderStates)))
                         {
-                            Console.WriteLine("Nieprawidłowa opcja filtrowania, wyświetlam wszystkie zamówienia");
-                            break;
+                            Console.WriteLine($"{(int)state} - {Utils.Instance.StateToString(state)}");
                         }
-                        OrderController.ShowAllOrders(OrderList, state);
+                        OrderStates filterState = (OrderStates)Utils.Instance.IntegerInput("Wybierz stan zamówienia: ");
+                        OrderController.ShowAllOrders(filterState);
                     }
                     else
-                        OrderController.ShowAllOrders(OrderList);
+                        OrderController.ShowAllOrders();
                     break;
                 case 4:
-                    o = OrderController.SelectOrder(OrderList);
+                    o = OrderController.SelectOrder();
                     if (o != null)
                     {
                         OrderController.ShowOrderDetails(o);
                     }
                     break;
                 case 5:
-                    o = OrderController.SelectOrder(OrderList, OrderStates.NEW);
+                    o = OrderController.SelectOrder(OrderStates.NEW);
                     if (o != null)
                     {
                         OrderController.ProcessOrder(o);
                     }
                     break;
                 case 6:
-                    o = OrderController.SelectOrder(OrderList, OrderStates.STORAGE);
+                    o = OrderController.SelectOrder(OrderStates.STORAGE);
                     if (o != null)
                         OrderController.SendOrder(o);
                     break;
                 case 7:
-                    o = OrderController.SelectOrder(OrderList, OrderStates.SENT);
+                    o = OrderController.SelectOrder(OrderStates.SENT);
                     if (o != null)
                         OrderController.CloseOrder(o);
                     break;
                 case 8:
-                    o = OrderController.SelectOrder(OrderList);
+                    o = OrderController.SelectOrder();
                     if (o != null)
                     { 
-                        OrderController.AddProductToOrder(o, ProductList);
+                        OrderController.AddProductToOrder(o, ProductController);
                     }
                     break;
                 default:

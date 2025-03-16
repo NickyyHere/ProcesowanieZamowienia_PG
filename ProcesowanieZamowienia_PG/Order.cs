@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProcesowanieZamowienia_PG
+﻿namespace ProcesowanieZamowienia_PG
 {
     internal class Order
     {
@@ -17,7 +11,7 @@ namespace ProcesowanieZamowienia_PG
             {
                 if (_state == value) return;
 
-                if (OrderAddress.IsNull())
+                if (OrderAddress.IsValid())
                     _state = OrderStates.ERROR;
                 else
                     _state = value;
@@ -66,7 +60,10 @@ namespace ProcesowanieZamowienia_PG
         }
         public void AddProduct(Product product, int amount)
         {
-            Products.Add(product, amount);
+            if(Products.ContainsKey(product))
+                Products[product] += amount;
+            else
+                Products.Add(product, amount);
         }
         public void RemoveProduct(Product product)
         {
@@ -83,6 +80,15 @@ namespace ProcesowanieZamowienia_PG
         public void SendOrder()
         {
             OrderState = OrderStates.SENT;
+        }
+        public float GetOrderValue()
+        {
+            float suma = 0f;
+            foreach (var product in Products)
+            {
+                suma += product.Key.ProductPrice * product.Value;
+            }
+            return suma;
         }
         public override string ToString()
         {

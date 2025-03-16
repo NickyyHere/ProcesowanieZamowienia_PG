@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProcesowanieZamowienia_PG
+﻿namespace ProcesowanieZamowienia_PG
 {
     internal class Product
     {
@@ -22,7 +16,7 @@ namespace ProcesowanieZamowienia_PG
 
         public override string ToString() 
         {
-            return $"{ProductId}. {ProductName} - {ProductPrice} zł";
+            return $"Produkt nr. {ProductId}. {ProductName} - {ProductPrice} zł";
         }
     }
 }
