@@ -41,6 +41,11 @@
         }
         public void UpsertOrder(Order? order = null) // UpSert - Update or Insert
         {
+            if (order != null && (order.OrderState != OrderStates.ERROR || order.OrderState != OrderStates.NEW))
+            {
+                Console.WriteLine("Można edytować tylko nowe, lub błędne zamówienia");
+                return;
+            }
             Clients clientType;
             Address address;
             IPayment paymentMethod;
