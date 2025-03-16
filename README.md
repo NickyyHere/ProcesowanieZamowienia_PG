@@ -35,5 +35,7 @@ zwrócone do klienta przy próbie przekazania do magazynu.</li>
 
 <h2>Dodatkowe możliwości:</h2>
 <ul>
-  <li>Edytowanie zamówienia (Zmiana typu klienta, adresu wysyłki, sposobu płatności) - Możliwe tylko przed przekazaniem zamówienia do magazynu</li>
+  <li>Edytowanie zamówienia (Zmiana typu klienta, adresu wysyłki, sposobu płatności) - Możliwe tylko w przypadku nowych lub błędnych zamówień</li>
+  <li>Wyświetlenie wszystkich informacji o konkretnym zamówieniu</li>
+  <li>Dodawanie wielu różnych produktów do zamówienia</li>
 </ul>
