@@ -32,7 +32,7 @@
             {
                 Clients.COMPANY => "Firma",
                 Clients.NATURAL_PERSON => "Osoba prywatna",
-                _ => throw new Exception("Nieznany typ klienta")
+                _ => "Nieznany typ klienta"
             };
         }
 
