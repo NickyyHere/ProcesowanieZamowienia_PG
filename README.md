@@ -33,3 +33,7 @@ zwrócone do klienta przy próbie przekazania do magazynu.</li>
   <li>Zamówienia bez adresu wysyłki powinny kończyć się błędem.</li>
 </ul>
 
+<h2>Dodatkowe możliwości:</h2>
+<ul>
+  <li>Edytowanie zamówienia (Zmiana typu klienta, adresu wysyłki, sposobu płatności) - Możliwe tylko przed przekazaniem zamówienia do magazynu</li>
+</ul>
