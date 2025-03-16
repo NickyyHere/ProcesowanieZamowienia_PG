@@ -102,6 +102,11 @@
         
         public void AddProductToOrder(Order order, ProductController productController)
         {
+            if (order.OrderState != OrderStates.ERROR || order.OrderState != OrderStates.NEW)
+            {
+                Console.WriteLine("Można edytować tylko nowe, lub błędne zamówienia");
+                return;
+            }
             Console.WriteLine("Wybierz produkt do dodania do zamówienia:");
             Product product = productController.SelectProduct();
             int amount = Utils.Instance.IntegerInput("Podaj ilość sztuk: ");
@@ -116,6 +121,11 @@
 
         public void RemoveProductFromOrder(Order order)
         {
+            if (order.OrderState != OrderStates.ERROR || order.OrderState != OrderStates.NEW)
+            {
+                Console.WriteLine("Można edytować tylko nowe, lub błędne zamówienia");
+                return;
+            }
             if (order.Products.Count == 0)
             {
                 Console.WriteLine("Brak produktów w zamówieniu");

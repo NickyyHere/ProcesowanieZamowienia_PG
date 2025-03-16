@@ -39,6 +39,7 @@
             Console.WriteLine("6. Wyślij zamówienie");
             Console.WriteLine("7. Zamknij zamówienie");
             Console.WriteLine("8. Dodaj produkt do zamówienia");
+            Console.WriteLine("9. Usuń produkt z zamówienia");
             Console.WriteLine("0. Wyjdź");
         }
         static void MenuController(int input)
@@ -99,6 +100,13 @@
                     if (o != null)
                     { 
                         OrderController.AddProductToOrder(o, ProductController);
+                    }
+                    break;
+                case 9:
+                    o = OrderController.SelectOrder();
+                    if (o != null)
+                    {
+                        OrderController.RemoveProductFromOrder(o);
                     }
                     break;
                 default:
