@@ -39,4 +39,5 @@ zwrócone do klienta przy próbie przekazania do magazynu.</li>
   <li>Wyświetlenie wszystkich informacji o konkretnym zamówieniu</li>
   <li>Dodawanie wielu różnych produktów do zamówienia</li>
   <li>Usuwanie produktów z zamówienia</li>
+  <li>Filtrowanie zamówień po ich stanie</li>
 </ul>
