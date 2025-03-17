@@ -27,6 +27,16 @@
             return Products[productId];
         }
 
+        public void AddNewProduct(Product product)
+        {
+            Products.Add(product);
+        }
+
+        public void RemoveProduct(Product product)
+        {
+            Products.Remove(product);
+        }
+
         public void InitProductList()
         {
             Products.Add(new Product("Monitor", 499.99f));

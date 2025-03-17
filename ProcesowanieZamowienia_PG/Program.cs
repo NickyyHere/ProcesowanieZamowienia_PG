@@ -2,13 +2,13 @@
 {
     class Program
     {
-        static OrderController OrderController = new OrderController();
-        static ProductController ProductController = new ProductController();
+        static OrderController _orderController = new OrderController();
+        static ProductController _productController = new ProductController();
         
         static void Main(string[] args)
         {
-            ProductController.InitProductList();
-            OrderController.InitOrderList(ProductController.Products);
+            _productController.InitProductList();
+            _orderController.InitOrderList(_productController.Products);
 
             int input = -1;
             do
@@ -45,13 +45,13 @@
             switch (input)
             {
                 case 1:
-                    OrderController.UpsertOrder(new Order());
+                    _orderController.UpsertOrder(new Order());
                     break;
                 case 2:
-                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
-                    if (OrderController.CurrentOrder != null)
+                    _orderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (_orderController.CurrentOrder != null)
                     {
-                        OrderController.UpsertOrder(OrderController.CurrentOrder);
+                        _orderController.UpsertOrder(_orderController.CurrentOrder);
                     }
                     break;
                 case 3:
@@ -63,47 +63,47 @@
                             Console.WriteLine($"{(int)state} - {Utils.StateToString(state)}");
                         }
                         OrderStates filterState = (OrderStates)Utils.IntegerInput("Wybierz stan zamówienia: ");
-                        OrderController.ShowAllOrders([filterState]);
+                        _orderController.ShowAllOrders([filterState]);
                     }
                     else
-                        OrderController.ShowAllOrders();
+                        _orderController.ShowAllOrders();
                     break;
                 case 4:
-                    OrderController.SelectOrder();
-                    if (OrderController.CurrentOrder != null)
+                    _orderController.SelectOrder();
+                    if (_orderController.CurrentOrder != null)
                     {
-                        OrderController.ShowOrderDetails();
+                        _orderController.ShowOrderDetails();
                     }
                     break;
                 case 5:
-                    OrderController.SelectOrder([OrderStates.NEW]);
-                    if (OrderController.CurrentOrder != null)
+                    _orderController.SelectOrder([OrderStates.NEW]);
+                    if (_orderController.CurrentOrder != null)
                     {
-                        OrderController.ProcessOrder();
+                        _orderController.ProcessOrder();
                     }
                     break;
                 case 6:
-                    OrderController.SelectOrder([OrderStates.STORAGE]);
-                    if (OrderController.CurrentOrder != null)
-                        OrderController.SendOrder();
+                    _orderController.SelectOrder([OrderStates.STORAGE]);
+                    if (_orderController.CurrentOrder != null)
+                        _orderController.SendOrder();
                     break;
                 case 7:
-                    OrderController.SelectOrder([OrderStates.SENT]);
-                    if (OrderController.CurrentOrder != null)
-                        OrderController.CloseOrder();
+                    _orderController.SelectOrder([OrderStates.SENT]);
+                    if (_orderController.CurrentOrder != null)
+                        _orderController.CloseOrder();
                     break;
                 case 8:
-                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
-                    if (OrderController.CurrentOrder != null)
+                    _orderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (_orderController.CurrentOrder != null)
                     { 
-                        OrderController.AddProductToOrder(ProductController);
+                        _orderController.AddProductToOrder(_productController);
                     }
                     break;
                 case 9:
-                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
-                    if (OrderController.CurrentOrder != null)
+                    _orderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (_orderController.CurrentOrder != null)
                     {
-                        OrderController.RemoveProductFromOrder();
+                        _orderController.RemoveProductFromOrder();
                     }
                     break;
                 default:

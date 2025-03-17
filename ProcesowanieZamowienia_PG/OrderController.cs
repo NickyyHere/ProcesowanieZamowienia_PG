@@ -3,7 +3,7 @@
     internal class OrderController
     {
         public List<Order> Orders { get; private set; }
-        public Order _currentOrder;
+        private Order _currentOrder;
         public Order CurrentOrder { 
             get 
             { 
@@ -91,21 +91,28 @@
                 Orders.Add(order);
             }
         }
-        public void SelectOrder(OrderStates? [] filter = null)
+        private void SetCurrentOrder(OrderStates? [] filter = null)
         {
-            ShowAllOrders(filter);
             int orderId = Utils.IntegerInput("Wprowadź numer zamówienia: ");
             if(orderId < 0 || orderId > Orders.Count - 1)
             {
                 Console.WriteLine("Nie ma zamówienia o podanym numerze");
+                CurrentOrder = null;
                 return;
             }
             if(filter != null && !filter.Contains(Orders[orderId].OrderState))
             {
-                Console.WriteLine("Nie można wybrać zamówienia o podanym stanie");
+                Console.WriteLine("Nie można wybrać tego zamówienia dla określonej akcji.\nWybierz zamówienie z listy.");
+                CurrentOrder = null;
                 return;
             }
             CurrentOrder = Orders[orderId];
+        }
+
+        public void SelectOrder(OrderStates?[] filter = null)
+        {
+            ShowAllOrders(filter);
+            SetCurrentOrder(filter);
         }
         
         public void AddProductToOrder(ProductController productController)
