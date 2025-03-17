@@ -2,21 +2,19 @@
 {
     class Program
     {
-        static List<Order> OrderList = new List<Order>();
-        static List<Product> ProductList = new List<Product>();
-        static OrderController OrderController = new OrderController(OrderList);
-        static ProductController ProductController = new ProductController(ProductList);
-
+        static OrderController OrderController = new OrderController();
+        static ProductController ProductController = new ProductController();
+        
         static void Main(string[] args)
         {
-            InitProductList();
-            InitOrderList();
+            ProductController.InitProductList();
+            OrderController.InitOrderList(ProductController.Products);
 
             int input = -1;
             do
             {
                 DisplayMenu();
-                input = Utils.Instance.IntegerInput("Wybierz opcję: ");
+                input = Utils.IntegerInput("Wybierz opcję: ");
                 if (input == 0)
                 {
                     Console.WriteLine("Kończenie...");
@@ -44,112 +42,74 @@
         }
         static void MenuController(int input)
         {
-            Order o;
             switch (input)
             {
                 case 1:
-                    OrderController.UpsertOrder();
+                    OrderController.UpsertOrder(new Order());
                     break;
                 case 2:
-                    o = OrderController.SelectOrder();
-                    if (o != null)
+                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (OrderController.CurrentOrder != null)
                     {
-                        OrderController.UpsertOrder(o);
+                        OrderController.UpsertOrder(OrderController.CurrentOrder);
                     }
                     break;
                 case 3:
-                    int choice = Utils.Instance.IntegerInput("Czy filtrować zamówienia po ich stanie?\n1 - TAK\n2 - NIE\n> ");
+                    int choice = Utils.IntegerInput("Czy filtrować zamówienia po ich stanie?\n1 - TAK\n2 - NIE\n> ");
                     if (choice == 1)
                     {
                         foreach (OrderStates state in Enum.GetValues(typeof(OrderStates)))
                         {
-                            Console.WriteLine($"{(int)state} - {Utils.Instance.StateToString(state)}");
+                            Console.WriteLine($"{(int)state} - {Utils.StateToString(state)}");
                         }
-                        OrderStates filterState = (OrderStates)Utils.Instance.IntegerInput("Wybierz stan zamówienia: ");
-                        OrderController.ShowAllOrders(filterState);
+                        OrderStates filterState = (OrderStates)Utils.IntegerInput("Wybierz stan zamówienia: ");
+                        OrderController.ShowAllOrders([filterState]);
                     }
                     else
                         OrderController.ShowAllOrders();
                     break;
                 case 4:
-                    o = OrderController.SelectOrder();
-                    if (o != null)
+                    OrderController.SelectOrder();
+                    if (OrderController.CurrentOrder != null)
                     {
-                        OrderController.ShowOrderDetails(o);
+                        OrderController.ShowOrderDetails();
                     }
                     break;
                 case 5:
-                    o = OrderController.SelectOrder(OrderStates.NEW);
-                    if (o != null)
+                    OrderController.SelectOrder([OrderStates.NEW]);
+                    if (OrderController.CurrentOrder != null)
                     {
-                        OrderController.ProcessOrder(o);
+                        OrderController.ProcessOrder();
                     }
                     break;
                 case 6:
-                    o = OrderController.SelectOrder(OrderStates.STORAGE);
-                    if (o != null)
-                        OrderController.SendOrder(o);
+                    OrderController.SelectOrder([OrderStates.STORAGE]);
+                    if (OrderController.CurrentOrder != null)
+                        OrderController.SendOrder();
                     break;
                 case 7:
-                    o = OrderController.SelectOrder(OrderStates.SENT);
-                    if (o != null)
-                        OrderController.CloseOrder(o);
+                    OrderController.SelectOrder([OrderStates.SENT]);
+                    if (OrderController.CurrentOrder != null)
+                        OrderController.CloseOrder();
                     break;
                 case 8:
-                    o = OrderController.SelectOrder();
-                    if (o != null)
+                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (OrderController.CurrentOrder != null)
                     { 
-                        OrderController.AddProductToOrder(o, ProductController);
+                        OrderController.AddProductToOrder(ProductController);
                     }
                     break;
                 case 9:
-                    o = OrderController.SelectOrder();
-                    if (o != null)
+                    OrderController.SelectOrder([OrderStates.NEW, OrderStates.ERROR]);
+                    if (OrderController.CurrentOrder != null)
                     {
-                        OrderController.RemoveProductFromOrder(o);
+                        OrderController.RemoveProductFromOrder();
                     }
                     break;
                 default:
                     Console.WriteLine("Nieprawidłowa opcja");
                     break;
             }
-        }
-        static void InitProductList()
-        {
-            ProductList.Add(new Product("Monitor", 499.99f));
-            ProductList.Add(new Product("Karta graficzna", 2499.99f));
-            ProductList.Add(new Product("Procesor", 2199.39f));
-            ProductList.Add(new Product("Karta dźwiękowa", 299.99f));
-            ProductList.Add(new Product("RAM", 99.99f));
-            ProductList.Add(new Product("HDD", 79.99f));
-            ProductList.Add(new Product("SSD", 114.99f));
-            ProductList.Add(new Product("Obudowa", 320.50f));
-            ProductList.Add(new Product("Zasilacz", 399.99f));
-            ProductList.Add(new Product("Klawiatura", 57.80f));
-            ProductList.Add(new Product("Myszka", 45.30f));
-            ProductList.Add(new Product("Głośniki", 99.99f));
-            ProductList.Add(new Product("Słuchawki", 170.99f));
-            Console.Clear();
-        }
-
-        static void InitOrderList()
-        {
-            Order tempOrder = new Order(Clients.COMPANY, new Address("Polska", "Warszawa", "Mazowiecka 12", "00-001"), new CreditCardPayment());
-            tempOrder.AddProduct(ProductList[0], 5);
-            tempOrder.AddProduct(ProductList[4], 5);
-            tempOrder.AddProduct(ProductList[5], 10);
-            tempOrder.ProcessOrder();
-            OrderList.Add(tempOrder);
-            tempOrder = new Order(Clients.NATURAL_PERSON, new Address("Polska", "Gdańsk", "Warszawska 74/2", "12-345"), new CashPayment());
-            tempOrder.AddProduct(ProductList[9], 1);
-            tempOrder.AddProduct(ProductList[10], 1);
-            OrderList.Add(tempOrder);
-            tempOrder = new Order(Clients.COMPANY, new Address("Niemcy", "Hamburg", "", "20652"), new CreditCardPayment());
-            tempOrder.AddProduct(ProductList[3], 6);
-            tempOrder.AddProduct(ProductList[5], 2);
-            tempOrder.AddProduct(ProductList[7], 9);
-            OrderList.Add(tempOrder);
-            Console.Clear();
         }
     }
 }

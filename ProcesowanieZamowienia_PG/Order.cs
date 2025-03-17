@@ -43,6 +43,12 @@
         public Address OrderAddress { get; private set; }
         public IPayment PaymentMethod { get; private set; }
 
+        public Order() {
+            OrderId = _orderId++;
+            OrderAddress = new Address();
+            OrderState = OrderStates.ERROR; // W celu wyciszenia powiadomienia o błędzie przy tworzeniu nowego zamówienia
+            PaymentMethod = new CashPayment();
+        }
         public Order(Clients clientType, Address orderAddress, IPayment paymentMethod)
         {
             OrderAddress = orderAddress;
@@ -69,17 +75,9 @@
         {
             Products.Remove(product);
         }
-        public void ProcessOrder()
+        public void ChangeOrderState(OrderStates orderState)
         {
-            OrderState = PaymentMethod.Process(this);
-        }
-        public void CloseOrder()
-        {
-            OrderState = OrderStates.CLOSED;
-        }
-        public void SendOrder()
-        {
-            OrderState = OrderStates.SENT;
+            OrderState = orderState;
         }
         public float GetOrderValue()
         {
@@ -92,7 +90,7 @@
         }
         public override string ToString()
         {
-            return $"Zamówienie nr. {OrderId}, Status zamówienia: {Utils.Instance.StateToString(OrderState)}";
+            return $"Zamówienie nr. {OrderId}, Status zamówienia: {Utils.StateToString(OrderState)}";
         }
     }
 }

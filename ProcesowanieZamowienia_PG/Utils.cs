@@ -1,19 +1,8 @@
 ﻿namespace ProcesowanieZamowienia_PG
 {
-    internal class Utils
+    internal static class Utils
     {
-        private static Utils? instance;
-
-        private Utils() { }
-        public static Utils Instance
-        {
-            get
-            {
-                if (instance == null) instance = new Utils();
-                return instance;
-            }
-        }
-        public string StateToString(OrderStates orderState)
+        public static string StateToString(OrderStates orderState)
         {
             return orderState switch
             {
@@ -26,7 +15,7 @@
             };
         }
 
-        public string ClientToString(Clients client)
+        public static string ClientToString(Clients client)
         {
             return client switch
             {
@@ -36,7 +25,7 @@
             };
         }
 
-        public int IntegerInput(string message = "")
+        public static int IntegerInput(string message = "")
         {
             int choice;
             Console.Write(message);

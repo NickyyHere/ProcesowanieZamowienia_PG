@@ -7,6 +7,10 @@
         public string Street { get; private set; }
         public string PostalCode { get; private set; }
 
+        public Address()
+        {
+            Country = City = Street = PostalCode = string.Empty;
+        }
         public Address(string country, string city, string street, string postalCode)
         {
             Country = country;
